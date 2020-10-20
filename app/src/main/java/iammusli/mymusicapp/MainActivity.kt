@@ -43,11 +43,11 @@ class MainActivity : AppCompatActivity(), Adapter.OnArtistListener {
                 { response ->
                     for (i in 0 until response.length()) {
                         try {
-                            val songObject = response.getJSONObject(i)
+                            val artistObject = response.getJSONObject(i)
                             val artist = Artists()
-                            artist.setID(songObject.getInt("ArtistID"))
-                            artist.setName(songObject.getString("ArtistName"))
-                            artist.setImage(songObject.getString("ArtistImage"))
+                            artist.setID(artistObject.getInt("ArtistID"))
+                            artist.setName(artistObject.getString("ArtistName"))
+                            artist.setImage(artistObject.getString("ArtistImage"))
                             artists!!.add(artist)
                         } catch (e: JSONException) {
                             e.printStackTrace()

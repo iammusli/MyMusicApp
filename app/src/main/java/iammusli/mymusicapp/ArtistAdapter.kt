@@ -24,9 +24,10 @@ class Adapter constructor(ctx: Context?, artists: ArrayList<Artists>, private va
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-       // holder.artistId.text = artists[position].getID().toString()
-       // holder.artistName.text = artists[position].getName()
-       // Picasso.get().load(artists[position].getImage()).into(holder.artistImage)
+        //stari onBindViewHolder
+        // holder.artistId.text = artists[position].getID().toString()
+        // holder.artistName.text = artists[position].getName()
+        // Picasso.get().load(artists[position].getImage()).into(holder.artistImage)
         holder.initialize(artists[position], clickListener)
     }
 
