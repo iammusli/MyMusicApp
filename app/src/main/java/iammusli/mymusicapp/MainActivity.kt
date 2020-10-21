@@ -21,18 +21,24 @@ class MainActivity : AppCompatActivity(), Adapter.OnArtistListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        artists = ArrayList<Artists>()
-        recyclerView = findViewById(R.id.artistList)
-
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
-        adapter = Adapter(this, artists!!, this)
-        recyclerView!!.adapter = adapter
+        preparedLayout()
+        refresh()
         extractArtists()
+    }
+    private fun refresh(){
         swipeRefreshLayout =  findViewById(R.id.swipe_view);
         swipeRefreshLayout!!.setOnRefreshListener {
+            artists?.clear()
             extractArtists()
             swipeRefreshLayout!!.isRefreshing = false
         }
+    }
+    private fun preparedLayout(){
+        artists = ArrayList<Artists>()
+        recyclerView = findViewById(R.id.artistList)
+        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        adapter = Adapter(this, artists!!, this)
+        recyclerView!!.adapter = adapter
     }
 
     private fun extractArtists() {
@@ -63,6 +69,7 @@ class MainActivity : AppCompatActivity(), Adapter.OnArtistListener {
 
     override fun OnArtistClick(artist: Artists, position: Int) {
         val album = Intent(this@MainActivity, AlbumActivity::class.java)
+        album.putExtra("key", artist.getID().toString())
         startActivity(album)
     }
 }

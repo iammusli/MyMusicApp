@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
 
@@ -20,40 +21,51 @@ class AlbumActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album)
-        recyclerView = findViewById(R.id.albumList)
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
-        albums = ArrayList()
-        adapter = AlbumAdapter(this, albums!!)
+        preparedLayout()
         extractAlbums()
+        refresh()
+    }
+    private fun refresh(){
         swipeRefreshLayout =  findViewById(R.id.swipe_album);
         swipeRefreshLayout!!.setOnRefreshListener {
+            albums?.clear()
             extractAlbums()
             swipeRefreshLayout!!.isRefreshing = false
         }
     }
-    private fun extractAlbums(){
-            val queue = Volley.newRequestQueue(this)
-            val JSON_URL = "https://jsonblob.com/api/2e6de260-0730-11eb-9c07-0b9c95cede88"
-            val jsonArrayRequest = JsonArrayRequest(
-                    Request.Method.GET, JSON_URL, null,
-                    { response ->
-                        for (i in 0 until response.length()) {
-                            try {
-                                val albumObject = response.getJSONObject(i)
-                                val album = Album()
-                                album.setYear(albumObject.getString("AlbumYear"))
-                                album.setName(albumObject.getString("AlbumName"))
-                                album.setImage(albumObject.getString("AlbumImage"))
-                                albums!!.add(album)
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        }
-                        recyclerView!!.layoutManager = LinearLayoutManager(this)
-                        adapter = AlbumAdapter(this, albums!!)
-                        recyclerView!!.adapter = adapter
-                    }
-            ) { error -> Log.d("tag", "onErrorResponse: " + error.message) }
-            queue.add(jsonArrayRequest)
-        }
+    private fun preparedLayout(){
+        recyclerView = findViewById(R.id.albumList)
+        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        albums = ArrayList()
+        adapter = AlbumAdapter(this, albums!!)
     }
+    private fun extractAlbums(){
+        var extra = intent.getStringExtra("key")
+        val queue = Volley.newRequestQueue(this)
+        val JSON_URL = "https://jsonblob.com/api/2e6de260-0730-11eb-9c07-0b9c95cede88"
+            val request = JsonObjectRequest(Request.Method.GET, JSON_URL, null,
+                    { response ->
+                            try {
+                                 val jsonArray : JSONArray = response.getJSONArray(extra);
+                                for (i in 0 until jsonArray.length()) {
+                                    val albumObject = jsonArray.getJSONObject (i)
+                                    val album = Album()
+                                    album.setYear(albumObject.getString("AlbumYear"))
+                                    album.setName(albumObject.getString("AlbumName"))
+                                    album.setImage(albumObject.getString("AlbumImage"))
+                                    albums!!.add(album)
+                                }
+                                recyclerView!!.layoutManager = LinearLayoutManager(this)
+                                adapter = AlbumAdapter(this, albums!!)
+                                recyclerView!!.adapter = adapter
+                            } catch (e : JSONException) {
+                                e.printStackTrace();
+                            }
+                        }) { error -> Log.d("tag", "onErrorResponse: " + error.message) }
+        queue.add(request);
+    }
+}
+
+
+
+
