@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="iammusli.mymusicapp">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.type.watch" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,11 +15,13 @@
         android:roundIcon="@mipmap/mylauncher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicApp">
+
+        <activity
+            android:name=".SongActivity"
+            android:label="@string/title_activity_song"></activity>
         <activity
             android:name=".AlbumActivity"
-            android:screenOrientation="sensor">
-
-        </activity>
+            android:screenOrientation="sensor"></activity>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="sensor">

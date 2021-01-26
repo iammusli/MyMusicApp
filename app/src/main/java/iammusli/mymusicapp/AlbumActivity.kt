@@ -1,5 +1,6 @@
 package iammusli.mymusicapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +14,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
 
-class AlbumActivity : AppCompatActivity() {
+class AlbumActivity : AppCompatActivity(), AlbumAdapter.OnAlbumListener {
     var recyclerView: RecyclerView? = null
     var swipeRefreshLayout: SwipeRefreshLayout? = null
     var albums: ArrayList<Album>? = null
@@ -37,7 +38,7 @@ class AlbumActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.albumList)
         recyclerView!!.layoutManager = LinearLayoutManager(this)
         albums = ArrayList()
-        adapter = AlbumAdapter(this, albums!!)
+        adapter = AlbumAdapter(this, albums!!, this)
     }
     private fun extractAlbums(){
         var extra = intent.getStringExtra("key")
@@ -50,19 +51,25 @@ class AlbumActivity : AppCompatActivity() {
                                 for (i in 0 until jsonArray.length()) {
                                     val albumObject = jsonArray.getJSONObject (i)
                                     val album = Album()
+                                    album.setID(albumObject.getInt("AlbumID"))
                                     album.setYear(albumObject.getString("AlbumYear"))
                                     album.setName(albumObject.getString("AlbumName"))
                                     album.setImage(albumObject.getString("AlbumImage"))
                                     albums!!.add(album)
                                 }
                                 recyclerView!!.layoutManager = LinearLayoutManager(this)
-                                adapter = AlbumAdapter(this, albums!!)
+                                adapter = AlbumAdapter(this, albums!!, this)
                                 recyclerView!!.adapter = adapter
                             } catch (e : JSONException) {
                                 e.printStackTrace();
                             }
                         }) { error -> Log.d("tag", "onErrorResponse: " + error.message) }
         queue.add(request);
+    }
+    override fun OnAlbumClick(albums: Album, position: Int) {
+        val song = Intent(this@AlbumActivity, SongActivity::class.java)
+        song.putExtra("key", albums.getID().toString())
+        startActivity(song)
     }
 }
 

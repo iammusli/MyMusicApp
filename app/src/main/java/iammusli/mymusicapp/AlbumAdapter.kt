@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.util.*
 
-class AlbumAdapter(ctx: Context?, albums: ArrayList<Album>) :
+class AlbumAdapter(ctx: Context?, albums: ArrayList<Album>, private var clickListener: OnAlbumListener) :
     RecyclerView.Adapter<AlbumAdapter.ViewHolder>()
 {
     var inflater: LayoutInflater = LayoutInflater.from(ctx)
@@ -20,6 +20,17 @@ class AlbumAdapter(ctx: Context?, albums: ArrayList<Album>) :
         var albumYear: TextView = itemView.findViewById(R.id.albumYear)
         var albumName: TextView = itemView.findViewById(R.id.albumName)
         var albumImage: ImageView = itemView.findViewById(R.id.albumImage)
+
+        fun initialize(album: Album, action: AlbumAdapter.OnAlbumListener) {
+            albumYear.text = album.getYear()
+            albumName.text = album.getName()
+            Picasso.get().load(album.getImage()).into(albumImage)
+
+        // handle onClick
+        itemView.setOnClickListener {
+            action.OnAlbumClick(album, adapterPosition)
+        }
+        }
     }
 
 
@@ -33,9 +44,13 @@ class AlbumAdapter(ctx: Context?, albums: ArrayList<Album>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.albumYear.text = albums[position].getYear()
-        holder.albumName.text = albums[position].getName()
-        Picasso.get().load(albums[position].getImage()).into(holder.albumImage)
+       // holder.albumYear.text = albums[position].getYear()
+       // holder.albumName.text = albums[position].getName()
+       // Picasso.get().load(albums[position].getImage()).into(holder.albumImage)
+        holder.initialize(albums[position], clickListener)
     }
-
+    interface OnAlbumListener{
+        fun OnAlbumClick(album: Album, position: Int){
+        }
+    }
 }
