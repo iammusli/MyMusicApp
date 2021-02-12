@@ -17,11 +17,14 @@
         android:theme="@style/Theme.MyMusicApp">
 
         <activity
+            android:name=".PlaySongActivity"
+            android:screenOrientation="sensor" />
+        <activity
             android:name=".SongActivity"
-            android:label="@string/title_activity_song"></activity>
+            android:screenOrientation="sensor" />
         <activity
             android:name=".AlbumActivity"
-            android:screenOrientation="sensor"></activity>
+            android:screenOrientation="sensor" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="sensor">
